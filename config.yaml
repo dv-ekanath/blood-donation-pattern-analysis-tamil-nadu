@@ -1,0 +1,90 @@
+# Central configuration — change paths/weights here, not inside code.
+
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  external_dir: data/external
+  figures_dir: reports/figures
+
+raw_files:
+  donors: blood_donation_portal.csv
+  blood_banks: blood_bank_directory.csv
+  tn_blood_banks: tn_blood_banks.csv
+  population: population_census.csv
+
+processed_files:
+  donors_clean: donors_clean.parquet
+  blood_banks_clean: blood_banks_clean.parquet
+  population_district: population_district.parquet
+  donors_enriched: donors_enriched.parquet          # + district, temporal, spatial features
+  district_summary: district_summary.parquet          # one row per district — feeds BDPI
+  district_recommendations: district_recommendations.csv
+
+# Only Tamil Nadu rows are kept; adjust if you widen scope later.
+filters:
+  state_name: "Tamil Nadu"
+
+# Restrict to a fixed list of official TN district names so fuzzy city/district
+# values in the donor & blood bank data can be mapped to a canonical set.
+# (Fill in the 38 TN districts; used by src/data/integrate.py for matching.)
+tn_districts:
+  - Ariyalur
+  - Chengalpattu
+  - Chennai
+  - Coimbatore
+  - Cuddalore
+  - Dharmapuri
+  - Dindigul
+  - Erode
+  - Kallakurichi
+  - Kanchipuram
+  - Kanyakumari
+  - Karur
+  - Krishnagiri
+  - Madurai
+  - Mayiladuthurai
+  - Nagapattinam
+  - Namakkal
+  - Nilgiris
+  - Perambalur
+  - Pudukkottai
+  - Ramanathapuram
+  - Ranipet
+  - Salem
+  - Sivaganga
+  - Tenkasi
+  - Thanjavur
+  - Theni
+  - Thoothukudi
+  - Tiruchirappalli
+  - Tirunelveli
+  - Tirupathur
+  - Tiruppur
+  - Tiruvallur
+  - Tiruvannamalai
+  - Tiruvarur
+  - Vellore
+  - Viluppuram
+  - Virudhunagar
+
+# Blood Donation Priority Index weights — must sum to 1.0
+bdpi_weights:
+  population_score: 0.30
+  donor_density: 0.25
+  eligible_donor_pct: 0.20
+  blood_bank_coverage: 0.15
+  recent_donation_activity: 0.10
+
+# Eligibility / recency thresholds used across feature engineering
+thresholds:
+  eligible_min_hemoglobin_g_dl: 12.5
+  eligible_min_weight_kg: 50
+  eligible_max_age: 65
+  eligible_min_age: 18
+  recent_activity_days: 180        # donation within last N days counts as "recent"
+  repeat_donor_min_total: 2
+
+spatial:
+  dbscan_eps_km: 15
+  dbscan_min_samples: 3
+  kde_bandwidth: 0.05
